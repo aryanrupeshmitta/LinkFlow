@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkFlow - Enterprise URL Shortener & Analytics Platform</title>
+  <meta name="description" content="Commercial-grade URL Shortener, Link Management, Custom Slugs, Passcode Protection, QR Code Generator, and Real-Time Analytics Platform." />
+  <meta name="theme-color" content="#0b0f19" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark-theme">
+  <!-- Animated Mesh Background -->
+  <canvas id="meshCanvas" aria-hidden="true"></canvas>
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-link"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">LinkFlow</span>
+          <span class="brand-badge">PRO v2.0</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="nav-btn active" data-tab="shortener-tab">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Shortener
+        </button>
+        <button class="nav-btn" data-tab="bulk-tab">
+          <i class="fa-solid fa-layer-group"></i> Bulk Create
+        </button>
+        <button class="nav-btn" data-tab="links-tab">
+          <i class="fa-solid fa-list-check"></i> Link Library
+        </button>
+        <button class="nav-btn" data-tab="health-tab">
+          <i class="fa-solid fa-heart-pulse"></i> Link Health
+        </button>
+        <button class="nav-btn" data-tab="api-tab">
+          <i class="fa-solid fa-code"></i> Developer API
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="storage-badge" id="storageEngineBadge">
+          <i class="fa-solid fa-database"></i> <span id="storageEngineText">Detecting...</span>
+        </div>
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <div class="hero-eyebrow">
+        <span class="hero-pill"><i class="fa-solid fa-shield-halved"></i> Passcode Protection</span>
+        <span class="hero-pill"><i class="fa-solid fa-chart-line"></i> Real-Time Analytics</span>
+        <span class="hero-pill"><i class="fa-solid fa-qrcode"></i> QR Generator</span>
+      </div>
+      <h1>Shorten, Track <span class="gradient-text">&amp; Optimize</span><br>Your Links at Scale</h1>
+      <p class="hero-subtitle">
+        Enterprise link management with custom aliases, bulk processing, password protection,<br class="hero-br"> UTM tagging, and real-time click analytics.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-pill">
+          <i class="fa-solid fa-link stat-icon"></i>
+          <div>
+            <span class="stat-num" id="statTotalLinks">0</span>
+            <span class="stat-label">Short Links</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill">
+          <i class="fa-solid fa-arrow-pointer stat-icon"></i>
+          <div>
+            <span class="stat-num" id="statTotalClicks">0</span>
+            <span class="stat-label">Clicks Tracked</span>
+          </div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill">
+          <i class="fa-solid fa-bolt stat-icon" style="color:#f59e0b;"></i>
+          <div>
+            <span class="stat-num" style="color:#f59e0b;">50</span>
+            <span class="stat-label">Max Bulk Links</span>
+          </div>
+        </div>
+      </div>
+      <p class="kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd> to focus URL input</p>
+    </section>
+
+    <!-- Tab 1: Single URL Shortener -->
+    <section id="shortener-tab" class="tab-content active">
+      <div class="glass-card">
+        <form id="singleShortenForm">
+          <div class="input-group main-input-group">
+            <label for="originalUrlInput">Destination Long URL <span class="required">*</span></label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-globe input-icon"></i>
+              <input
+                id="originalUrlInput"
+                type="url"
+                placeholder="https://example.com/your-very-long-marketing-campaign-link"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Advanced Link Options Toggle -->
+          <div class="options-accordion">
+            <button type="button" id="toggleAdvancedBtn" class="accordion-toggle">
+              <span><i class="fa-solid fa-sliders"></i> Advanced Link Controls (Custom Slug, Password, Expiration, UTM)</span>
+              <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            </button>
+
+            <div id="advancedOptions" class="accordion-body hidden">
+              <div class="form-grid">
+                <!-- Custom Slug -->
+                <div class="input-group">
+                  <label for="customSlugInput">Custom Alias / Slug</label>
+                  <div class="input-prefix-wrap">
+                    <span class="domain-prefix">linkflow.io/</span>
+                    <input id="customSlugInput" type="text" placeholder="my-custom-slug" pattern="[a-zA-Z0-9_-]{3,30}" />
+                  </div>
+                  <small class="hint">3-30 letters, numbers, hyphens</small>
+                </div>
+
+                <!-- Link Title -->
+                <div class="input-group">
+                  <label for="linkTitleInput">Title / Description</label>
+                  <input id="linkTitleInput" type="text" placeholder="e.g. Summer Promo Campaign 2026" />
+                </div>
+
+                <!-- Passcode -->
+                <div class="input-group">
+                  <label for="passcodeInput">Passcode Protection</label>
+                  <div class="input-with-icon">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input id="passcodeInput" type="password" placeholder="Optional secret code" />
+                  </div>
+                </div>
+
+                <!-- Expiration Date -->
+                <div class="input-group">
+                  <label for="expiresAtInput">Expiration Date</label>
+                  <input id="expiresAtInput" type="datetime-local" />
+                </div>
+
+                <!-- Max Click Limit -->
+                <div class="input-group">
+                  <label for="maxClicksInput">Max Click Limit</label>
+                  <input id="maxClicksInput" type="number" min="1" placeholder="e.g. 100" />
+                </div>
+
+                <!-- Tags -->
+                <div class="input-group">
+                  <label for="tagsInput">Tags (Comma Separated)</label>
+                  <input id="tagsInput" type="text" placeholder="marketing, promo, social" />
+                </div>
+              </div>
+
+              <!-- UTM Builder Accordion Section -->
+              <div class="utm-section">
+                <h4><i class="fa-solid fa-bullhorn"></i> UTM Parameter Builder</h4>
+                <div class="form-grid utm-grid">
+                  <input id="utmSource" type="text" placeholder="utm_source (e.g. twitter)" />
+                  <input id="utmMedium" type="text" placeholder="utm_medium (e.g. cpc)" />
+                  <input id="utmCampaign" type="text" placeholder="utm_campaign (e.g. summer_sale)" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="shortenSubmitBtn" class="btn primary-btn btn-block">
+            <i class="fa-solid fa-bolt"></i> Shorten URL Now
+          </button>
+        </form>
+
+        <!-- Result Box -->
+        <div id="resultBox" class="result-box hidden">
+          <div class="result-header">
+            <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div>
+              <h3>Your Short URL is Ready!</h3>
+              <p id="resultOriginalUrl" class="result-original"></p>
+            </div>
+          </div>
+
+          <div class="result-actions-row">
+            <div class="short-url-display">
+              <i class="fa-solid fa-link"></i>
+              <a id="resultShortUrl" href="#" target="_blank"></a>
+            </div>
+            <div class="action-btn-group">
+              <button id="copyShortUrlBtn" class="btn secondary-btn">
+                <i class="fa-regular fa-copy"></i> Copy
+              </button>
+              <button id="shareResultBtn" class="btn secondary-btn">
+                <i class="fa-solid fa-share-nodes"></i> Share
+              </button>
+              <button id="viewQrBtn" class="btn secondary-btn">
+                <i class="fa-solid fa-qrcode"></i> QR Code
+              </button>
+              <button id="viewAnalyticsBtn" class="btn secondary-btn">
+                <i class="fa-solid fa-chart-line"></i> Analytics
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Bulk Shortener -->
+    <section id="bulk-tab" class="tab-content">
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-layer-group"></i> Bulk URL Shortener</h2>
+        <p class="section-desc">Shorten up to 50 URLs in one batch. Enter one long URL per line.</p>
+        
+        <form id="bulkForm">
+          <div class="input-group">
+            <textarea
+              id="bulkUrlsTextarea"
+              rows="6"
+              placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" id="bulkSubmitBtn" class="btn primary-btn">
+            <i class="fa-solid fa-gears"></i> Process Bulk Links
+          </button>
+        </form>
+
+        <div id="bulkResultsContainer" class="bulk-results hidden">
+          <h3>Bulk Output Results</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Original URL</th>
+                  <th>Short URL</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="bulkResultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Link Library & Management -->
+    <section id="links-tab" class="tab-content">
+      <div class="glass-card">
+        <div class="library-header">
+          <div>
+            <h2><i class="fa-solid fa-list-check"></i> Link Management Library</h2>
+            <p class="section-desc">Search, filter, edit, and track performance of all short links.</p>
+          </div>
+          <div class="action-btn-group">
+            <button id="exportCsvBtn" class="btn secondary-btn csv-export-btn">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button id="refreshLibraryBtn" class="btn secondary-btn">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Search by title, original URL or short code..." />
+          </div>
+          
+          <div class="filter-selects">
+            <select id="statusFilter">
+              <option value="all">All Statuses</option>
+              <option value="active">Active Links</option>
+              <option value="paused">Paused Links</option>
+              <option value="expired">Expired Links</option>
+            </select>
+
+            <select id="sortBySelect">
+              <option value="createdAt">Newest First</option>
+              <option value="clicks">Most Clicked</option>
+              <option value="title">By Title</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Links Data Table -->
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Link Info</th>
+                <th>Short URL</th>
+                <th>Clicks</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="linksTableBody">
+              <tr>
+                <td colspan="6" class="text-center">Loading links...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: Link Health Checker -->
+    <section id="health-tab" class="tab-content">
+      <div class="glass-card">
+        <div class="library-header">
+          <div>
+            <h2><i class="fa-solid fa-heart-pulse"></i> Link Health Monitor</h2>
+            <p class="section-desc">Check whether your destination URLs are alive and returning valid responses. Detects broken links automatically.</p>
+          </div>
+          <button id="runHealthCheckBtn" class="btn primary-btn">
+            <i class="fa-solid fa-stethoscope"></i> Run Health Check
+          </button>
+        </div>
+
+        <!-- Health Summary Bar -->
+        <div id="healthSummary" class="health-summary hidden">
+          <div class="health-stat ok"><i class="fa-solid fa-circle-check"></i> <span id="healthOkCount">0</span> Healthy</div>
+          <div class="health-stat warn"><i class="fa-solid fa-triangle-exclamation"></i> <span id="healthWarnCount">0</span> Redirects</div>
+          <div class="health-stat error"><i class="fa-solid fa-circle-xmark"></i> <span id="healthErrCount">0</span> Broken</div>
+        </div>
+
+        <!-- Health Results Table -->
+        <div class="table-wrap" id="healthTableWrap">
+          <div class="empty-state">
+            <i class="fa-solid fa-stethoscope empty-icon"></i>
+            <p>Click "Run Health Check" to scan all your links</p>
+            <small>Checks HTTP status codes for all stored destination URLs</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Developer API Docs -->
+    <section id="api-tab" class="tab-content">
+      <div class="glass-card">
+        <h2><i class="fa-solid fa-code"></i> Developer REST API Reference (v1)</h2>
+        <p class="section-desc">Integrate LinkFlow programmatically into your apps or workflows. All endpoints are under <code>/api/v1</code>.</p>
+
+        <p class="api-section-heading">🔗 Link Shortening</p>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method post">POST</span>
+            <code>/api/v1/shorten</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Create a short link</span>
+          </div>
+          <p>Create a single short link with optional custom alias, expiration date, click limit, passcode protection, and UTM parameters.</p>
+          <div class="code-block"><pre id="apiCodeShorten"></pre></div>
+          <div class="response-block"><code id="apiRespShorten"></code></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method post">POST</span>
+            <code>/api/v1/bulk-shorten</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Batch create up to 50 links</span>
+          </div>
+          <p>Process up to 50 links in one request. Returns per-link success/failure status.</p>
+          <div class="code-block"><pre id="apiCodeBulk"></pre></div>
+        </div>
+
+        <p class="api-section-heading">📋 Link Management</p>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method get">GET</span>
+            <code>/api/v1/links</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">?search=&amp;status=all&amp;limit=50&amp;offset=0&amp;sortBy=createdAt</span>
+          </div>
+          <p>List all links with optional search, status filtering, pagination, and sorting.</p>
+          <div class="code-block"><pre id="apiCodeList"></pre></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method get">GET</span>
+            <code>/api/v1/links/:shortCode</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Get single link details</span>
+          </div>
+          <div class="code-block"><pre id="apiCodeGet"></pre></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method put">PUT</span>
+            <code>/api/v1/links/:shortCode</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Update link properties</span>
+          </div>
+          <p>Update destination URL, title, tags, passcode, expiration, or pause/resume status.</p>
+          <div class="code-block"><pre id="apiCodeUpdate"></pre></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method del">DELETE</span>
+            <code>/api/v1/links/:shortCode</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Permanently delete a link</span>
+          </div>
+          <div class="code-block"><pre id="apiCodeDelete"></pre></div>
+        </div>
+
+        <p class="api-section-heading">📊 Analytics &amp; Utilities</p>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method get">GET</span>
+            <code>/api/v1/links/:shortCode/analytics</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Click analytics report</span>
+          </div>
+          <p>Returns total clicks, timeline, referrers, device and browser breakdown, and last 50 click activity logs.</p>
+          <div class="code-block"><pre id="apiCodeAnalytics"></pre></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method get">GET</span>
+            <code>/api/v1/links/:shortCode/qr?format=png</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">QR code image</span>
+          </div>
+          <p>Returns a base64 PNG data URL (default) or SVG string (<code>?format=svg</code>) of the short link QR code.</p>
+          <div class="code-block"><pre id="apiCodeQr"></pre></div>
+        </div>
+
+        <div class="api-endpoint-card">
+          <div class="endpoint-header">
+            <span class="http-method get">GET</span>
+            <code>/api/v1/stats</code>
+            <span class="small-text" style="margin-left:auto; color: var(--text-muted); font-size:12px;">Platform global stats</span>
+          </div>
+          <div class="code-block"><pre id="apiCodeStats"></pre></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Social Share Modal -->
+  <div id="shareModal" class="modal-overlay hidden">
+    <div class="modal-card text-center">
+      <button class="modal-close" data-close="shareModal">&times;</button>
+      <h3><i class="fa-solid fa-share-nodes"></i> Share This Link</h3>
+      <p id="shareModalUrl" class="share-url-display"></p>
+
+      <div class="share-grid">
+        <a id="shareTwitter" href="#" target="_blank" class="share-btn twitter">
+          <i class="fa-brands fa-x-twitter"></i> X / Twitter
+        </a>
+        <a id="shareLinkedIn" href="#" target="_blank" class="share-btn linkedin">
+          <i class="fa-brands fa-linkedin-in"></i> LinkedIn
+        </a>
+        <a id="shareWhatsApp" href="#" target="_blank" class="share-btn whatsapp">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </a>
+        <a id="shareFacebook" href="#" target="_blank" class="share-btn facebook">
+          <i class="fa-brands fa-facebook-f"></i> Facebook
+        </a>
+        <a id="shareEmail" href="#" class="share-btn email">
+          <i class="fa-solid fa-envelope"></i> Email
+        </a>
+        <button id="shareNative" class="share-btn native">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i> More...
+        </button>
+      </div>
+
+      <button id="copyShareUrlBtn" class="btn primary-btn" style="margin-top:16px; width:100%;">
+        <i class="fa-regular fa-copy"></i> Copy Short URL
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Link Modal -->
+  <div id="editModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button class="modal-close" data-close="editModal">&times;</button>
+      <h3><i class="fa-solid fa-pen-to-square"></i> Edit Short Link</h3>
+      <p class="small-text" style="margin-bottom:16px;">Editing: <strong id="editModalCode"></strong></p>
+
+      <div class="edit-form-grid">
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label for="editOriginalUrl">Destination URL</label>
+          <input id="editOriginalUrl" type="url" placeholder="https://example.com" />
+        </div>
+        <div class="input-group">
+          <label for="editTitle">Title / Description</label>
+          <input id="editTitle" type="text" placeholder="Link title" />
+        </div>
+        <div class="input-group">
+          <label for="editPasscode">Passcode (leave blank to remove)</label>
+          <input id="editPasscode" type="password" placeholder="New passcode" />
+        </div>
+        <div class="input-group">
+          <label for="editExpiresAt">Expiration Date</label>
+          <input id="editExpiresAt" type="datetime-local" />
+        </div>
+        <div class="input-group">
+          <label for="editMaxClicks">Max Click Limit</label>
+          <input id="editMaxClicks" type="number" min="1" placeholder="Unlimited" />
+        </div>
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label for="editTags">Tags (Comma Separated)</label>
+          <input id="editTags" type="text" placeholder="marketing, social" />
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px;">
+          <input type="checkbox" id="editIsPaused" style="width:auto;"> Pause this link (disables redirection)
+        </label>
+      </div>
+
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button data-close="editModal" class="btn secondary-btn">Cancel</button>
+        <button id="saveEditBtn" class="btn primary-btn">
+          <i class="fa-solid fa-floppy-disk"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="modal-overlay hidden">
+    <div class="modal-card text-center">
+      <button class="modal-close" data-close="qrModal">&times;</button>
+      <h3><i class="fa-solid fa-qrcode"></i> Short Link QR Code</h3>
+      <p id="qrShortCodeText" class="small-text"></p>
+
+      <div class="qr-preview-container">
+        <img id="qrImage" src="" alt="QR Code Preview" />
+      </div>
+
+      <div class="modal-actions">
+        <a id="downloadPngBtn" download="qrcode.png" href="#" class="btn primary-btn">
+          <i class="fa-solid fa-download"></i> Download PNG
+        </a>
+        <button data-close="qrModal" class="btn secondary-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Modal -->
+  <div id="analyticsModal" class="modal-overlay hidden">
+    <div class="modal-card modal-large">
+      <button class="modal-close" data-close="analyticsModal">&times;</button>
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-chart-pie"></i> Link Analytics Dashboard</h2>
+        <span id="analyticsShortCode" class="badge"></span>
+      </div>
+
+      <div class="analytics-metrics-grid">
+        <div class="metric-card">
+          <span class="metric-val" id="analyticsTotalClicks">0</span>
+          <span class="metric-lbl">Total Clicks</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-val" id="analyticsTopReferrer">Direct</span>
+          <span class="metric-lbl">Top Traffic Source</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-val" id="analyticsTopDevice">Desktop</span>
+          <span class="metric-lbl">Primary Device</span>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h4>Clicks Over Time</h4>
+          <canvas id="timelineChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h4>Traffic Referrers</h4>
+          <canvas id="referrerChart"></canvas>
+        </div>
+      </div>
+
+      <div class="recent-clicks-section">
+        <h4>Recent Click Activity Logs</h4>
+        <div class="table-wrap">
+          <table class="data-table small-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Referrer</th>
+                <th>Device / OS</th>
+                <th>IP / Region</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsLogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

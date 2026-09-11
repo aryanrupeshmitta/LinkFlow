@@ -1,0 +1,46 @@
+[
+  {
+    "shortCode": "skDXWs",
+    "timestamp": "2026-09-11T17:56:08.197Z",
+    "ip": "::ffff:127.0.0.1",
+    "referer": "Direct",
+    "userAgent": "Unknown",
+    "device": "Desktop",
+    "browser": "Other",
+    "os": "Other",
+    "country": "Local"
+  },
+  {
+    "shortCode": "skDXWs",
+    "timestamp": "2026-09-11T17:12:34.690Z",
+    "ip": "::ffff:127.0.0.1",
+    "referer": "Direct",
+    "userAgent": "Unknown",
+    "device": "Desktop",
+    "browser": "Other",
+    "os": "Other",
+    "country": "Local"
+  },
+  {
+    "shortCode": "skDXWs",
+    "timestamp": "2026-09-11T17:10:29.761Z",
+    "ip": "::ffff:127.0.0.1",
+    "referer": "Direct",
+    "userAgent": "Unknown",
+    "device": "Desktop",
+    "browser": "Other",
+    "os": "Other",
+    "country": "Local"
+  },
+  {
+    "shortCode": "skDXWs",
+    "timestamp": "2026-09-11T17:09:44.237Z",
+    "ip": "::ffff:127.0.0.1",
+    "referer": "Direct",
+    "userAgent": "Unknown",
+    "device": "Desktop",
+    "browser": "Other",
+    "os": "Other",
+    "country": "Local"
+  }
+]

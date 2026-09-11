@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - BASE_URL=http://localhost:3000
+      - STORAGE_ENGINE=mongodb
+      - MONGODB_URI=mongodb://mongo:27017
+      - DB_NAME=urlShortenerDB
+    depends_on:
+      - mongo
+    restart: always
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
