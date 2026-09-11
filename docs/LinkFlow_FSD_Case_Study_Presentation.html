@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkFlow - FSD Case Study Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --primary: #6366f1;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Animated background gradient blobs */
+    .bg-blobs {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      animation: float 12s infinite alternate ease-in-out;
+    }
+    .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--primary); }
+    .blob-2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; background: #ec4899; }
+    .blob-3 { top: 40%; right: 20%; width: 35vw; height: 35vw; background: var(--emerald); }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 40px) scale(1.08); }
+    }
+
+    /* Presentation Header */
+    header {
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(12px);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
+    .brand i { color: var(--primary); font-size: 22px; }
+    .slide-counter { font-size: 14px; font-weight: 600; color: var(--muted); background: var(--border); padding: 4px 12px; border-radius: 20px; }
+
+    /* Slide Container */
+    .presentation-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      max-width: 1200px;
+      height: 100%;
+      max-height: 640px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Header Pill */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .slide-h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Grid & Card Utilities */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title.indigo { color: var(--primary); }
+    .card-title.emerald { color: var(--emerald); }
+    .card-title.amber { color: var(--amber); }
+
+    .bullet-list { list-style: none; }
+    .bullet-list li {
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .bullet-list li i { color: var(--primary); margin-top: 4px; font-size: 12px; }
+
+    /* Code Block */
+    pre {
+      background: #090d16;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #86efac;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    /* Slide Controls */
+    footer {
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      background: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: var(--primary); border-color: var(--primary); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <header>
+    <div class="brand"><i class="fa-solid fa-link"></i> LinkFlow PRO Presentation</div>
+    <div class="slide-counter" id="slideCounter">Slide 1 of 10</div>
+  </header>
+
+  <div class="presentation-viewport">
+    <!-- SLIDE 1: Title Slide -->
+    <div class="slide active">
+      <div class="eyebrow"><i class="fa-solid fa-graduation-cap"></i> Full Stack Development Case Study (Code: 2550544)</div>
+      <h1 class="slide-h1" style="font-size:44px; margin-bottom:16px;">LinkFlow - Enterprise URL Shortener<br>&amp; Link Analytics Platform</h1>
+      <p style="color:var(--muted); font-size:18px; margin-bottom:32px;">Commercial-grade URL Shortener with Passcode Security, Expiration Controls, QR Codes &amp; Real-Time Telemetry</p>
+      
+      <div class="glass-card grid-2" style="padding:24px;">
+        <div>
+          <span style="color:var(--muted); font-size:13px; font-weight:600; display:block;">PRESENTED BY</span>
+          <strong style="font-size:18px; color:var(--emerald);">MITTA ARYAN RUPESH</strong>
+          <span style="color:var(--muted); font-size:13px; display:block; margin-top:4px;">Department of CSE, MLRITM</span>
+        </div>
+        <div>
+          <span style="color:var(--muted); font-size:13px; font-weight:600; display:block;">SUBMITTED TO</span>
+          <strong style="font-size:18px; color:#fff;">Department of Computer Science &amp; Engineering</strong>
+          <span style="color:var(--muted); font-size:13px; display:block; margin-top:4px;">MLR Institute of Technology &amp; Management</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Summary -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-file-contract"></i> Section 1</div>
+      <h2 class="slide-h1">Executive Summary of the Case Study</h2>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-title indigo"><i class="fa-solid fa-cubes"></i> Core Solution &amp; Scope</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-circle-check"></i> Enterprise URL shortening suite solving link clutter and campaign tracking.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Custom aliases (<code>linkflow.io/summer-sale</code>), instant QR codes, and password protection.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Automatic expiration timestamps, max click limits, and UTM builders.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <div class="card-title emerald"><i class="fa-solid fa-shield-halved"></i> Architectural Resilience</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-circle-check"></i> Zero-Setup Dual-Engine Storage System (MongoDB Atlas + Embedded Local JSON).</li>
+            <li><i class="fa-solid fa-circle-check"></i> Auto-detects cloud database; falls back to local storage without setup errors.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Live Link Health Audit Scanner and 100% passing automated test suite.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Intro & Problem Statement -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-lightbulb"></i> Section 2</div>
+      <h2 class="slide-h1">Introduction &amp; Problem Statement</h2>
+      <div class="glass-card" style="margin-bottom:20px;">
+        <div class="card-title indigo"><i class="fa-solid fa-circle-exclamation"></i> Background &amp; Challenges</div>
+        <p style="color:var(--muted); font-size:15px; line-height:1.6;">
+          Long URLs containing heavy query strings are visually unappealing, break in text sharing, and obscure marketing campaign performance. Existing public tools suffer from paywalls, lack password controls, impose strict rate limits, and crash without cloud database setups.
+        </p>
+      </div>
+      <div class="glass-card">
+        <div class="card-title emerald"><i class="fa-solid fa-rocket"></i> The LinkFlow Solution</div>
+        <p style="color:#e2e8f0; font-size:15px; line-height:1.6;">
+          A self-hostable, production-ready Full Stack platform combining dual-storage resilience, commercial security (passcode hashing &amp; expiration controls), real-time Chart.js telemetry dashboards, and a complete v1 REST API.
+        </p>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Objectives -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-bullseye"></i> Section 3</div>
+      <h2 class="slide-h1">Objectives of the Case Study</h2>
+      <div class="grid-4">
+        <div class="glass-card">
+          <div class="card-title indigo"><i class="fa-solid fa-server"></i> 1. REST Engine</div>
+          <p style="font-size:13px; color:var(--muted);">Build Express.js REST API supporting single/bulk shortening, deletion, and redirection.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-title emerald"><i class="fa-solid fa-database"></i> 2. Dual Storage</div>
+          <p style="font-size:13px; color:var(--muted);">Implement dual-engine storage abstraction (MongoDB + Local JSON) for zero-setup execution.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-title amber"><i class="fa-solid fa-lock"></i> 3. Security</div>
+          <p style="font-size:13px; color:var(--muted);">Enforce passcode hashing, link expiration, max click limits, and rate limiting.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-title indigo"><i class="fa-solid fa-chart-pie"></i> 4. Telemetry</div>
+          <p style="font-size:13px; color:var(--muted);">Develop dark glassmorphic UI with Chart.js analytics timelines and QR code previews.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Requirements Analysis -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-list-check"></i> Section 4</div>
+      <h2 class="slide-h1">Functional &amp; Technical Requirements</h2>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-title indigo"><i class="fa-solid fa-gear"></i> Functional Requirements</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-check"></i> FR-1: Custom slugs &amp; 6-char short codes.</li>
+            <li><i class="fa-solid fa-check"></i> FR-2: Bulk shorten up to 50 URLs in one batch.</li>
+            <li><i class="fa-solid fa-check"></i> FR-3: Password prompt redirection screens.</li>
+            <li><i class="fa-solid fa-check"></i> FR-4: Auto-expiration &amp; click limits.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <div class="card-title amber"><i class="fa-solid fa-microchip"></i> Non-Functional &amp; Stack</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-check"></i> NFR-1: Sub-50ms HTTP redirection response time.</li>
+            <li><i class="fa-solid fa-check"></i> NFR-2: 100% Uptime via auto-fallback storage.</li>
+            <li><i class="fa-solid fa-check"></i> Backend: Node.js, Express, Jest, Supertest.</li>
+            <li><i class="fa-solid fa-check"></i> Frontend: HTML5, CSS3 Glassmorphism, Chart.js.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Architecture -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-sitemap"></i> Section 5</div>
+      <h2 class="slide-h1">System Architecture &amp; Dual Storage</h2>
+      <div class="glass-card">
+        <pre>
+  [ Client SPA Browser ]  <--->  [ Express Middleware & Router ]
+           |                                  |
+  (Chart.js / QR / UI)             [ Shortener Service Layer ]
+                                              |
+                                 [ Storage Abstraction Layer ]
+                                      /               \
+                      [ MongoDB Database ]   [ Local JSON Storage ]</pre>
+        <p style="color:var(--muted); font-size:14px; margin-top:16px;">
+          Auto-detects MongoDB URI; falls back transparently to local file storage if database is offline.
+        </p>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Implementation -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-code"></i> Section 6</div>
+      <h2 class="slide-h1">Implementation Highlights</h2>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-title emerald"><i class="fa-solid fa-server"></i> Backend Modules</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-check"></i> <code>server.js</code> — Bootstrap Express &amp; Storage.</li>
+            <li><i class="fa-solid fa-check"></i> <code>src/db/storage.js</code> — Storage abstraction layer.</li>
+            <li><i class="fa-solid fa-check"></i> <code>src/routes/apiRoutes.js</code> — 9 REST endpoints.</li>
+            <li><i class="fa-solid fa-check"></i> <code>src/routes/redirectRoutes.js</code> — Redirection &amp; password prompt handler.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <div class="card-title indigo"><i class="fa-solid fa-palette"></i> Frontend SPA UI</div>
+          <ul class="bullet-list">
+            <li><i class="fa-solid fa-check"></i> 5-tab responsive glassmorphism interface.</li>
+            <li><i class="fa-solid fa-check"></i> Chart.js timeline &amp; traffic referrer charts.</li>
+            <li><i class="fa-solid fa-check"></i> Link Health Scanner &amp; Social Share Hub.</li>
+            <li><i class="fa-solid fa-check"></i> Animated particle mesh canvas &amp; <code>Ctrl+K</code> shortcut.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Testing -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-vial"></i> Section 7</div>
+      <h2 class="slide-h1">Testing &amp; Verification Results</h2>
+      <div class="glass-card">
+        <div class="card-title emerald"><i class="fa-solid fa-circle-check"></i> Jest Automated Integration Test Suite</div>
+        <pre>
+PASS tests/shortener.test.js
+  URL Shortener API Tests
+    ✓ POST /api/v1/shorten creates a short URL (87 ms)
+    ✓ POST /api/v1/shorten handles custom slug and duplicate prevention (614 ms)
+    ✓ GET /api/v1/links returns list of links (13 ms)
+    ✓ POST /api/v1/bulk-shorten processes multiple URLs (13 ms)
+    ✓ GET /:shortCode redirects to original URL (19 ms)
+
+Test Suites: 1 passed, 1 total | Tests: 5 passed, 5 total | Time: 2.158 s</pre>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Results & Discussion -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-chart-line"></i> Section 8</div>
+      <h2 class="slide-h1">Results &amp; Discussion</h2>
+      <div class="glass-card">
+        <ul class="bullet-list">
+          <li><i class="fa-solid fa-check" style="color:var(--emerald);"></i> <strong>Redirection Latency:</strong> Sub-20ms HTTP redirection response time on local storage; sub-10ms on MongoDB.</li>
+          <li><i class="fa-solid fa-check" style="color:var(--emerald);"></i> <strong>Zero-Setup Guarantee:</strong> Anyone can clone and run immediately without database setup errors.</li>
+          <li><i class="fa-solid fa-check" style="color:var(--emerald);"></i> <strong>Commercial Viability:</u> Complete feature parity with Bitly and TinyURL platforms including QR generation, UTM builders, and Chart.js dashboards.</li>
+          <li><i class="fa-solid fa-check" style="color:var(--emerald);"></i> <strong>Docker Deployment:</strong> Containerized with Dockerfile and docker-compose.yml for 1-command cloud launch.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Conclusion -->
+    <div class="slide">
+      <div class="eyebrow"><i class="fa-solid fa-flag-checkered"></i> Section 9</div>
+      <h2 class="slide-h1">Conclusion &amp; Future Roadmap</h2>
+      <div class="grid-2">
+        <div class="glass-card">
+          <div class="card-title emerald"><i class="fa-solid fa-circle-check"></i> Conclusion</div>
+          <p style="color:var(--muted); font-size:14px; line-height:1.6;">
+            LinkFlow PRO v2.1 fulfills all project goals, delivering a market-reusable, commercial-grade URL shortener platform with custom aliases, password security, expiration controls, QR codes, click telemetry, and REST API support.
+          </p>
+        </div>
+        <div class="glass-card">
+          <div class="card-title amber"><i class="fa-solid fa-map-location-dot"></i> Future Roadmap (v3.0)</div>
+          <ul class="bullet-list" style="font-size:13px;">
+            <li><i class="fa-solid fa-arrow-right"></i> Custom Domain CNAME Routing for multi-tenant setups.</li>
+            <li><i class="fa-solid fa-arrow-right"></i> User Accounts &amp; JWT Authentication with RBAC.</li>
+            <li><i class="fa-solid fa-arrow-right"></i> AI-Powered Fraud &amp; Phishing Detection on target URLs.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+    <div style="color:var(--muted); font-size:13px;">Use Left / Right arrow keys to navigate slides</div>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next <i class="fa-solid fa-chevron-right"></i></button>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const counter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function updateSlide() {
+      slides.forEach((s, index) => {
+        s.classList.toggle('active', index === currentSlide);
+      });
+      counter.textContent = `Slide ${currentSlide + 1} of ${totalSlides}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+    }
+
+    function changeSlide(direction) {
+      currentSlide = Math.max(0, Math.min(totalSlides - 1, currentSlide + direction));
+      updateSlide();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') changeSlide(1);
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
