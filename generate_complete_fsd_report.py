@@ -156,8 +156,6 @@ def build_complete_fsd_report():
     r2.font.size = Pt(11)
     r2.font.color.rgb = DARK_TEXT
 
-    doc.add_page_break()
-
     # ----------------------------------------------------
     # SECTION: Summary of the Case Study (Max 500 Words)
     # ----------------------------------------------------
@@ -397,7 +395,10 @@ def build_complete_fsd_report():
             p.runs[0].font.size = Pt(9.5)
             if col_idx == 4:
                 p.runs[0].font.bold = True
-                p.runs[0].font.color.rgb = RGBColor(16, 185, 129)
+    # Prevent row splitting across pages and keep table compact on 1 page
+    for row in table.rows:
+        trPr = row._tr.get_or_add_trPr()
+        trPr.append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
 
     doc.add_paragraph().paragraph_format.space_after = Pt(10)
 
@@ -462,9 +463,16 @@ def build_complete_fsd_report():
     add_bullet("Incorporate Machine Learning model models to detect phishing targets and malicious redirect destinations.", "3. AI Threat Detection: ")
 
     # Save document
+    import os, shutil
     out_docx = r'c:\Users\mitta\Downloads\URL-Shortener-Simulator\URL_Shortner_Simulater_FSD_Report.docx'
     doc.save(out_docx)
     print("Complete FSD Case Study Report DOCX generated at:", out_docx)
+
+    docs_dir = os.path.join(os.path.dirname(__file__), 'docs')
+    os.makedirs(docs_dir, exist_ok=True)
+    repo_docx = os.path.join(docs_dir, 'URL_Shortner_Simulater_FSD_Report.docx')
+    shutil.copyfile(out_docx, repo_docx)
+    print("Copied to repository docs at:", repo_docx)
 
 if __name__ == "__main__":
     build_complete_fsd_report()
