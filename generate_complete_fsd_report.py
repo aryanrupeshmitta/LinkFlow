@@ -70,12 +70,12 @@ def build_complete_fsd_report():
         if level == 1:
             p.paragraph_format.space_before = Pt(18)
             p.paragraph_format.space_after = Pt(8)
-            run.font.size = Pt(15)
+            run.font.size = Pt(14)
             run.font.color.rgb = ACCENT_BLUE
         elif level == 2:
             p.paragraph_format.space_before = Pt(14)
             p.paragraph_format.space_after = Pt(6)
-            run.font.size = Pt(13)
+            run.font.size = Pt(14)
             run.font.color.rgb = NAVY_PRIMARY
         elif level == 3:
             p.paragraph_format.space_before = Pt(10)
@@ -91,12 +91,12 @@ def build_complete_fsd_report():
         if bold_prefix:
             r_b = p.add_run(bold_prefix)
             r_b.font.name = 'Calibri'
-            r_b.font.size = Pt(11)
+            r_b.font.size = Pt(12)
             r_b.font.bold = True
             r_b.font.color.rgb = DARK_TEXT
         r_t = p.add_run(text)
         r_t.font.name = 'Calibri'
-        r_t.font.size = Pt(11)
+        r_t.font.size = Pt(12)
         r_t.font.color.rgb = DARK_TEXT
         return p
 
@@ -107,12 +107,12 @@ def build_complete_fsd_report():
         if bold_prefix:
             r_b = p.add_run(bold_prefix)
             r_b.font.name = 'Calibri'
-            r_b.font.size = Pt(11)
+            r_b.font.size = Pt(12)
             r_b.font.bold = True
             r_b.font.color.rgb = DARK_TEXT
         r_t = p.add_run(text)
         r_t.font.name = 'Calibri'
-        r_t.font.size = Pt(11)
+        r_t.font.size = Pt(12)
         r_t.font.color.rgb = DARK_TEXT
         return p
 
@@ -137,7 +137,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     add_subtitle("Course: FULL STACK DEVELOPMENT (Course Code: 2550544)")
     doc.add_paragraph().paragraph_format.space_after = Pt(10)
-    add_title("FSD CASE STUDY REPORT")
+    add_title("URL SHORTNER SIMULATER")
     add_subtitle("LinkFlow - Enterprise URL Shortener & Link Analytics Platform")
     
     p_meta = doc.add_paragraph()
@@ -161,6 +161,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Summary of the Case Study (Max 500 Words)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Summary of the Case Study", level=1)
     add_paragraph(
         "LinkFlow is a commercial-grade, full-stack enterprise URL shortening, password protection, and real-time link analytics platform. "
@@ -180,6 +181,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Introduction (max 2 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Introduction", level=1)
     
     add_heading("Background", level=2)
@@ -215,6 +217,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Requirements Analysis (max 2 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Requirements Analysis", level=1)
 
     add_heading("Functional Requirements", level=2)
@@ -245,6 +248,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: System Analysis and Design (max 2 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("System Analysis and Design", level=1)
 
     add_heading("System Architecture Diagram", level=2)
@@ -301,6 +305,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Implementation (max 5 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Implementation", level=1)
 
     add_heading("Core Module Architecture", level=2)
@@ -343,6 +348,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Testing and Results (max 5 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Testing and Results", level=1)
 
     add_heading("Testing Methodology", level=2)
@@ -425,6 +431,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Results and Discussion (max 2 Pages)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Results and Discussion", level=1)
     add_paragraph(
         "The experimental results demonstrate that LinkFlow achieves exceptional operational performance. Redirection latency benchmarks registered "
@@ -439,6 +446,7 @@ def build_complete_fsd_report():
     # ----------------------------------------------------
     # SECTION: Conclusion and Future Works (max 1 Page)
     # ----------------------------------------------------
+    doc.add_page_break()
     add_heading("Conclusion and Future Works", level=1)
     
     add_heading("Conclusion", level=2)
@@ -454,7 +462,7 @@ def build_complete_fsd_report():
     add_bullet("Incorporate Machine Learning model models to detect phishing targets and malicious redirect destinations.", "3. AI Threat Detection: ")
 
     # Save document
-    out_docx = r'c:\Users\mitta\Downloads\URL-Shortener-Simulator\LinkFlow_FSD_Case_Study_Report.docx'
+    out_docx = r'c:\Users\mitta\Downloads\URL-Shortener-Simulator\URL_Shortner_Simulater_FSD_Report.docx'
     doc.save(out_docx)
     print("Complete FSD Case Study Report DOCX generated at:", out_docx)
 
